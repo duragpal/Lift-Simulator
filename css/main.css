@@ -1,0 +1,19 @@
+h1 {
+  text-align: center;
+}
+.outer {
+  background: rgb(223, 192, 252);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+
+.btn {
+  background-color: rgb(117, 182, 182);
+}
+.btn:hover {
+  background-color: aquamarine;
+  cursor: pointer;
+  outline: none;
+}
