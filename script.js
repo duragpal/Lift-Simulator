@@ -14,7 +14,7 @@ submit.addEventListener("click", () => {
     busy: false,
   }));
 
-  for (let i = floors; i >= 0; i--) {
+  for (let i = floors - 1; i >= 0; i--) {
     simulation.appendChild(createFloor(i, lifts));
   }
 });
