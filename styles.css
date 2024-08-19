@@ -1,19 +1,65 @@
-h1 {
-  text-align: center;
-}
-.outer {
-  background: rgb(223, 192, 252);
+.lift {
+  position: relative;
+  transition: transform 2s ease;
+  border: 2px solid black;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 1rem;
+  justify-content: center;
+  background-color: #ccc;
+  overflow: hidden;
+  margin-right: 10px;
 }
 
-.btn {
-  background-color: rgb(117, 182, 182);
+.lift-container {
+  display: flex;
+  margin-left: 20px;
 }
-.btn:hover {
-  background-color: aquamarine;
-  cursor: pointer;
-  outline: none;
+
+.doors {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  background-color: black;
+  transition: width 2.5s ease;
+}
+
+.left-door {
+  left: 0;
+}
+
+.right-door {
+  right: 0;
+}
+
+.floor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  height: 100px;
+  border-bottom: 2px solid #ddd;
+}
+
+.floor-label {
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.buttons {
+  margin-bottom: 10px;
+}
+
+.building {
+  position: relative;
+  max-width: 90vw;
+  margin: 0 auto;
 }

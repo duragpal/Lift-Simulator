@@ -7,21 +7,13 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Lift Simulation</h1>
-    <div class="outer">
-      <div>
-        <label for="floors">Enter number of floors:</label>
-        <input id="floors" type="number" />
-      </div>
-      <div>
-        <label for="lifts">Enter number of lifts:</label>
-
-        <input id="lifts" type="number" />
-      </div>
-
-      <button id="submit-btn" class="btn">Submit</button>
+    <div>
+      Floors: <input type="number" id="floors" value="5" min="2" /> Lifts:
+      <input type="number" id="lifts" value="2" min="1" />
+      <button id="submit-btn">Start Simulation</button>
     </div>
-    <div id="simulation"></div>
+
+    <div id="simulation" class="building"></div>
   </body>
   <script src="script.js"></script>
 </html>
