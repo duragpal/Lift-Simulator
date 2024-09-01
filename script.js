@@ -8,7 +8,7 @@
         const lifts = parseInt(document.getElementById("lifts").value);
 
         if (isNaN(floors) || isNaN(lifts) || floors <= 0 || lifts <= 0) {
-          alert("Please enter valid positive numbers for floors and lifts.");
+          alert("Please enter positive numbers for floors and lifts.");
           return;
         }
 
