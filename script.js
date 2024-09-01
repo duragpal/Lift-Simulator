@@ -1,127 +1,138 @@
-const submit = document.getElementById("submit-btn");
-const simulation = document.getElementById("simulation");
+ const submit = document.getElementById("submit-btn");
+      const simulation = document.getElementById("simulation");
 
-let liftState = [];
+      let liftState = [];
 
-submit.addEventListener("click", () => {
-  const floors = parseInt(document.getElementById("floors").value);
-  const lifts = parseInt(document.getElementById("lifts").value);
-  if (floors <= 0 || lifts <= 0) {
-    alert("Value of floors and lifts should be atleast 1.");
-  } else {
-    simulation.innerHTML = "";
-    liftState = Array.from({ length: lifts }, () => ({
-      currentFloor: 0,
-      destinationQueue: [],
-      busy: false,
-    }));
-  }
+      submit.addEventListener("click", () => {
+        const floors = parseInt(document.getElementById("floors").value);
+        const lifts = parseInt(document.getElementById("lifts").value);
 
-  for (let i = floors - 1; i >= 0; i--) {
-    simulation.appendChild(createFloor(i, lifts));
-  }
-});
+        if (isNaN(floors) || isNaN(lifts) || floors <= 0 || lifts <= 0) {
+          alert("Please enter valid positive numbers for floors and lifts.");
+          return;
+        }
 
-function createFloor(floor, lifts) {
-  const floorDiv = document.createElement("div");
-  floorDiv.className = "floor";
+        simulation.innerHTML = "";
+        liftState = Array.from({ length: lifts }, () => ({
+          currentFloor: 0,
+          destinationQueue: [],
+          busy: false,
+        }));
 
-  const floorLabel = document.createElement("div");
-  floorLabel.className = "floor-label";
-  floorLabel.innerHTML = `Floor ${floor}`;
-  floorDiv.appendChild(floorLabel);
+        for (let i = floors - 1; i >= 0; i--) {
+          simulation.appendChild(createFloor(i, lifts));
+        }
+      });
 
-  const buttonContainer = document.createElement("div");
-  buttonContainer.className = "button-container";
+      function createFloor(floor, lifts) {
+        const floorDiv = document.createElement("div");
+        floorDiv.className = "floor";
 
-  if (floor > 0) {
-    const downButton = document.createElement("button");
-    downButton.className = "buttons down";
-    downButton.innerHTML = "DOWN";
-    downButton.addEventListener("click", () =>
-      handleButtonClick(floor, "DOWN")
-    );
-    buttonContainer.appendChild(downButton);
-  }
+        const floorLabel = document.createElement("div");
+        floorLabel.className = "floor-label";
+        floorLabel.innerHTML = `Floor ${floor}`;
+        floorDiv.appendChild(floorLabel);
 
-  if (floor < parseInt(document.getElementById("floors").value - 1)) {
-    const upButton = document.createElement("button");
-    upButton.className = "buttons up";
-    upButton.innerHTML = "UP";
-    upButton.addEventListener("click", () => handleButtonClick(floor, "UP"));
-    buttonContainer.appendChild(upButton);
-  }
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "button-container";
 
-  floorDiv.appendChild(buttonContainer);
+        if (floor > 0) {
+          const downButton = document.createElement("button");
+          downButton.className = "buttons down";
+          downButton.innerHTML = "DOWN";
+          downButton.addEventListener("click", () =>
+            handleButtonClick(floor, "DOWN")
+          );
+          buttonContainer.appendChild(downButton);
+        }
 
-  if (floor === 0) {
-    const liftContainer = document.createElement("div");
-    liftContainer.className = "lift-container";
+        if (floor < parseInt(document.getElementById("floors").value - 1)) {
+          const upButton = document.createElement("button");
+          upButton.className = "buttons up";
+          upButton.innerHTML = "UP";
+          upButton.addEventListener("click", () =>
+            handleButtonClick(floor, "UP")
+          );
+          buttonContainer.appendChild(upButton);
+        }
 
-    for (let j = 0; j < lifts; j++) {
-      const liftDiv = document.createElement("div");
-      liftDiv.className = "lift";
-      liftDiv.id = `lift-${j}`;
+        floorDiv.appendChild(buttonContainer);
 
-      liftDiv.style.transform = `translateY(${floor * -100}px)`;
+        if (floor === 0) {
+          const liftContainer = document.createElement("div");
+          liftContainer.className = "lift-container";
 
-      const leftDoor = document.createElement("div");
-      leftDoor.className = "doors left-door";
+          for (let j = 0; j < lifts; j++) {
+            const liftDiv = document.createElement("div");
+            liftDiv.className = "lift";
+            liftDiv.id = `lift-${j}`;
 
-      const rightDoor = document.createElement("div");
-      rightDoor.className = "doors right-door";
+            liftDiv.style.transform = `translateY(${floor * -100}px)`;
 
-      liftDiv.appendChild(leftDoor);
-      liftDiv.appendChild(rightDoor);
+            const leftDoor = document.createElement("div");
+            leftDoor.className = "doors left-door";
 
-      liftContainer.appendChild(liftDiv);
-    }
+            const rightDoor = document.createElement("div");
+            rightDoor.className = "doors right-door";
 
-    floorDiv.appendChild(liftContainer);
-  }
+            liftDiv.appendChild(leftDoor);
+            liftDiv.appendChild(rightDoor);
 
-  return floorDiv;
-}
+            liftContainer.appendChild(liftDiv);
+          }
 
-function handleButtonClick(floor, direction) {
-  let nearestLift = -1;
-  let minDistance = Infinity;
+          floorDiv.appendChild(liftContainer);
+        }
 
-  liftState.forEach((lift, index) => {
-    const distance = Math.abs(lift.currentFloor - floor);
-    if (distance < minDistance && !lift.busy) {
-      minDistance = distance;
-      nearestLift = index;
-    }
-  });
+        return floorDiv;
+      }
 
-  if (nearestLift !== -1) {
-    moveLift(nearestLift, floor);
-  }
-}
+      function handleButtonClick(floor, direction) {
+        let nearestLift = -1;
+        let minDistance = Infinity;
 
-function moveLift(liftIndex, floor) {
-  const lift = liftState[liftIndex];
-  lift.busy = true;
-  const liftDiv = document.getElementById(`lift-${liftIndex}`);
-  const distance = Math.abs(lift.currentFloor - floor);
-  const travelTime = distance * 2;
+        let allBusy = liftState.every((lift) => lift.busy);
 
-  lift.currentFloor = floor;
-  liftDiv.style.transitionDuration = `${travelTime}s`;
-  liftDiv.style.transform = `translateY(${floor * -100}px)`;
+        if (allBusy) {
+          console.log("All lifts are busy. Call ignored.");
+          return;
+        }
 
-  setTimeout(() => {
-    const leftDoor = liftDiv.querySelector(".left-door");
-    const rightDoor = liftDiv.querySelector(".right-door");
-    leftDoor.style.width = "0";
-    rightDoor.style.width = "0";
+        liftState.forEach((lift, index) => {
+          const distance = Math.abs(lift.currentFloor - floor);
+          if (distance < minDistance && !lift.busy) {
+            minDistance = distance;
+            nearestLift = index;
+          }
+        });
 
-    setTimeout(() => {
-      leftDoor.style.width = "50%";
-      rightDoor.style.width = "50%";
+        if (nearestLift !== -1) {
+          moveLift(nearestLift, floor);
+        }
+      }
 
-      lift.busy = false;
-    }, 2500);
-  }, travelTime * 1000);
-}
+      function moveLift(liftIndex, floor) {
+        const lift = liftState[liftIndex];
+        lift.busy = true;
+        const liftDiv = document.getElementById(`lift-${liftIndex}`);
+        const distance = Math.abs(lift.currentFloor - floor);
+        const travelTime = distance * 2;
+
+        lift.currentFloor = floor;
+        liftDiv.style.transitionDuration = `${travelTime}s`;
+        liftDiv.style.transform = `translateY(${floor * -100}px)`;
+
+        setTimeout(() => {
+          const leftDoor = liftDiv.querySelector(".left-door");
+          const rightDoor = liftDiv.querySelector(".right-door");
+          leftDoor.style.width = "0";
+          rightDoor.style.width = "0";
+
+          setTimeout(() => {
+            leftDoor.style.width = "50%";
+            rightDoor.style.width = "50%";
+
+            lift.busy = false;
+          }, 2500);
+        }, travelTime * 1000);
+      }
