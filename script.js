@@ -6,13 +6,16 @@ let liftState = [];
 submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
   const lifts = parseInt(document.getElementById("lifts").value);
-
-  simulation.innerHTML = "";
-  liftState = Array.from({ length: lifts }, () => ({
-    currentFloor: 0,
-    destinationQueue: [],
-    busy: false,
-  }));
+  if (floors <= 0 || lifts <= 0) {
+    alert("Value of floors and lifts should be atleast 1.");
+  } else {
+    simulation.innerHTML = "";
+    liftState = Array.from({ length: lifts }, () => ({
+      currentFloor: 0,
+      destinationQueue: [],
+      busy: false,
+    }));
+  }
 
   for (let i = floors - 1; i >= 0; i--) {
     simulation.appendChild(createFloor(i, lifts));
@@ -33,7 +36,7 @@ function createFloor(floor, lifts) {
 
   if (floor > 0) {
     const downButton = document.createElement("button");
-    downButton.className = "buttons";
+    downButton.className = "buttons down";
     downButton.innerHTML = "DOWN";
     downButton.addEventListener("click", () =>
       handleButtonClick(floor, "DOWN")
@@ -41,9 +44,9 @@ function createFloor(floor, lifts) {
     buttonContainer.appendChild(downButton);
   }
 
-  if (floor < parseInt(document.getElementById("floors").value)) {
+  if (floor < parseInt(document.getElementById("floors").value - 1)) {
     const upButton = document.createElement("button");
-    upButton.className = "buttons";
+    upButton.className = "buttons up";
     upButton.innerHTML = "UP";
     upButton.addEventListener("click", () => handleButtonClick(floor, "UP"));
     buttonContainer.appendChild(upButton);

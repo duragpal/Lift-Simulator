@@ -56,10 +56,46 @@
 
 .buttons {
   margin-bottom: 10px;
+  background-color: #04aa6d;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  border: none;
 }
 
+.up {
+  background-color: white;
+  color: black;
+  border: 2px solid #008cba;
+}
+
+.up:hover {
+  background-color: #008cba;
+  color: white;
+}
+
+.down {
+  background-color: white;
+  color: black;
+  border: 2px solid #f44336;
+}
+
+.down:hover {
+  background-color: #f44336;
+  color: white;
+}
 .building {
   position: relative;
   max-width: 90vw;
   margin: 0 auto;
+}
+#submit-btn {
+  background-color: white;
+  color: black;
+  border: 2px solid #04aa6d;
+}
+
+#submit-btn:hover {
+  background-color: #04aa6d;
+  color: white;
 }
