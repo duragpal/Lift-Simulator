@@ -1,5 +1,6 @@
 const submit = document.getElementById("submit-btn");
 const simulation = document.getElementById("simulation");
+const inputDiv = document.querySelector(".inputDiv");
 
 let liftState = [];
 let floorLiftCount = {};
@@ -8,11 +9,19 @@ submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
   const lifts = parseInt(document.getElementById("lifts").value);
 
-  if (isNaN(floors) || isNaN(lifts) || floors <= 0 || lifts <= 0) {
+  if (isNaN(floors) || isNaN(lifts) || floors <= 0 || lifts < 0) {
     alert("Please enter positive numbers for floors and lifts.");
     return;
   }
-
+  if (floors === 1) {
+    alert("No need of lift for single ground floor.");
+    return;
+  }
+  if (lifts == 0) {
+    alert(`Atleast 1 lift required to goto ${floors} floors.`);
+    return;
+  }
+  inputDiv.style.display = "none";
   simulation.innerHTML = "";
   liftState = Array.from({ length: lifts }, () => ({
     currentFloor: 0,
@@ -60,6 +69,7 @@ function createFloor(floor, lifts) {
 
   floorDiv.appendChild(buttonContainer);
 
+  // Create lifts only for floor 0
   if (floor === 0) {
     const liftContainer = document.createElement("div");
     liftContainer.className = "lift-container";

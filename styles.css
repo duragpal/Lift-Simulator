@@ -4,51 +4,103 @@ body {
   margin: 0;
   padding: 0;
 }
-
 .inputDiv {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #e3f2fd;
-  border: 1px solid #bbdefb;
-  padding: 15px;
-  border-radius: 8px;
-  width: 250px;
-  margin: 20px auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #d4fcf9 0%, #add7f6 100%);
+  border: 2px solid #b3e5fc;
+  padding: 25px;
+  border-radius: 15px;
+  width: 300px;
+  margin: 50px auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.inputDiv:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .input-box {
-  width: 80px;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #90caf9;
-  border-radius: 4px;
-  background-color: #ffffff;
-  transition: border-color 0.3s;
+  width: 100px;
+  padding: 10px;
+  margin: 20px auto;
+  border: 2px solid #c1e1ec;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
 }
 
 .input-box:focus {
-  border-color: #64b5f6;
+  border-color: #81d4fa;
   outline: none;
+  box-shadow: 0 0 5px rgba(129, 212, 250, 0.6);
 }
 
 .secondInput {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 label {
-  color: #424242;
+  color: #455a64;
   font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#submit-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #81c784;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.3s, transform 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+#submit-btn:hover {
+  background-color: #66bb6a;
+  transform: scale(1.05);
+}
+.building-wrapper {
+  width: 100vw;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .building {
   position: relative;
-  width: 90vw;
-  margin: 0 auto;
-  max-height: 100vh;
-  overflow-y: auto;
+  width: max-content;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.floor {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  height: 100px;
+  border-bottom: 2px solid #ddd;
+  width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  background: linear-gradient(90deg, #f1f8e9 0%, #e0f2f1 100%);
+
+  transition: background-color 0.3s ease-in-out;
+}
+
+.floor:hover {
+  background-color: #e0e0e0;
 }
 
 .lift-container {
@@ -56,26 +108,26 @@ label {
   gap: 20px;
   justify-content: center;
   align-items: center;
+  width: fit-content;
 }
 
 .lift {
   position: relative;
-  transition: transform 2s ease;
-  border: 2px solid black;
+  border: 2px solid #555;
   width: 50px;
   height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: #ccc;
   overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .doors {
   position: absolute;
   width: 50%;
   height: 100%;
-  background-color: black;
+  background-color: #333;
   transition: width 2.5s ease;
 }
 
@@ -87,20 +139,6 @@ label {
   right: 0;
 }
 
-.floor {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  position: relative;
-  height: 100px;
-  border-bottom: 2px solid #ddd;
-}
-
-.floor-label {
-  font-weight: bold;
-  margin-right: 50px;
-}
-
 .button-container {
   display: flex;
   flex-direction: column;
@@ -110,48 +148,39 @@ label {
 
 .buttons {
   margin-bottom: 10px;
-  background-color: #04aa6d;
-  text-align: center;
-  text-decoration: none;
-  color: white;
-  border: none;
-  padding: 5px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease-in-out;
 }
 
 .up {
-  background-color: white;
-  color: black;
-  border: 2px solid #008cba;
+  background-color: #0288d1;
+  color: white;
+  border: 2px solid #0277bd;
 }
 
 .up:hover {
-  background-color: #008cba;
-  color: white;
+  background-color: #0277bd;
+  transform: scale(1.05);
 }
 
 .down {
-  background-color: white;
-  color: black;
-  border: 2px solid #f44336;
+  background-color: #d32f2f;
+  color: white;
+  border: 2px solid #c62828;
 }
 
 .down:hover {
-  background-color: #f44336;
-  color: white;
+  background-color: #c62828;
+  transform: scale(1.05);
 }
 
-#submit-btn {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #64b5f6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#submit-btn:hover {
-  background-color: #42a5f5;
+.floor-label {
+  font-weight: bold;
+  margin-right: 30px;
+  color: #424242;
+  font-size: 18px;
 }
