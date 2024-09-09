@@ -5,6 +5,7 @@ const inputDiv = document.querySelector(".inputDiv");
 let liftState = [];
 let floorLiftCount = {};
 let requestQueue = [];
+let activeRequests = new Set(); // Track floors with active requests
 
 submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
@@ -33,6 +34,7 @@ submit.addEventListener("click", () => {
   }));
 
   floorLiftCount = {};
+  activeRequests.clear(); // Reset active requests
 
   for (let i = floors - 1; i >= 0; i--) {
     floorLiftCount[i] = 0;
@@ -102,6 +104,12 @@ function createFloor(floor, lifts) {
 }
 
 function handleButtonClick(floor, direction) {
+  // Check if the floor is already being served
+  if (activeRequests.has(floor)) {
+    console.log(`Floor ${floor} is already being served. Ignoring request.`);
+    return;
+  }
+
   let nearestLift = -1;
   let minDistance = Infinity;
 
@@ -172,6 +180,9 @@ function assignLift(liftIndex, floor, direction) {
   lift.busy = true;
   lift.direction = direction;
 
+  // Mark the floor as being served
+  activeRequests.add(floor);
+
   const liftDiv = document.getElementById(`lift-${liftIndex}`);
   const distance = Math.abs(lift.currentFloor - floor);
   const travelTime = distance * 2; // 2 seconds per floor
@@ -184,6 +195,10 @@ function assignLift(liftIndex, floor, direction) {
     openCloseDoors(liftDiv, liftIndex, () => {
       lift.busy = false;
       lift.direction = null; // Lift is idle
+
+      // After serving, remove the floor from active requests
+      activeRequests.delete(floor);
+
       checkQueuedRequests(); // After completing the task, check if any requests are pending
     });
   }, travelTime * 1000);
@@ -201,7 +216,7 @@ function openCloseDoors(liftDiv, liftIndex, callback) {
     rightDoor.style.width = "50%";
 
     setTimeout(() => {
-      callback();
-    }, 2500);
-  }, 2500);
+      callback(); // Once doors are closed, proceed to the next task
+    }, 2500); // Allow 2.5 seconds for the doors to fully close
+  }, 2500); // Keep doors open for 2.5 seconds
 }
