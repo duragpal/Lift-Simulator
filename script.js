@@ -4,6 +4,7 @@ const inputDiv = document.querySelector(".inputDiv");
 
 let liftState = [];
 let floorLiftCount = {};
+let requestQueue = [];
 
 submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
@@ -14,18 +15,20 @@ submit.addEventListener("click", () => {
     return;
   }
   if (floors === 1) {
-    alert("No need of lift for single ground floor.");
+    alert("No need for lift on a single ground floor.");
     return;
   }
-  if (lifts == 0) {
-    alert(`Atleast 1 lift required to goto ${floors} floors.`);
+  if (lifts === 0) {
+    alert(`At least 1 lift is required to go to ${floors} floors.`);
     return;
   }
+
   inputDiv.style.display = "none";
   simulation.innerHTML = "";
   liftState = Array.from({ length: lifts }, () => ({
     currentFloor: 0,
     destinationQueue: [],
+    direction: null, // 'UP' or 'DOWN'
     busy: false,
   }));
 
@@ -69,7 +72,6 @@ function createFloor(floor, lifts) {
 
   floorDiv.appendChild(buttonContainer);
 
-  // Create lifts only for floor 0
   if (floor === 0) {
     const liftContainer = document.createElement("div");
     liftContainer.className = "lift-container";
@@ -100,39 +102,76 @@ function createFloor(floor, lifts) {
 }
 
 function handleButtonClick(floor, direction) {
-  if (floorLiftCount[floor] >= 2) {
-    console.log(
-      `Maximum lifts already heading to floor ${floor}. Call ignored.`
-    );
-    return;
-  }
-
   let nearestLift = -1;
   let minDistance = Infinity;
 
   let allBusy = liftState.every((lift) => lift.busy);
 
   if (allBusy) {
-    console.log("All lifts are busy. Call ignored.");
+    queueRequest(floor, direction);
     return;
   }
 
   liftState.forEach((lift, index) => {
-    const distance = Math.abs(lift.currentFloor - floor);
-    if (distance < minDistance && !lift.busy) {
-      minDistance = distance;
-      nearestLift = index;
+    if (
+      !lift.busy &&
+      (lift.direction === null || lift.direction === direction)
+    ) {
+      const distance = Math.abs(lift.currentFloor - floor);
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestLift = index;
+      }
     }
   });
 
   if (nearestLift !== -1) {
-    moveLift(nearestLift, floor);
+    assignLift(nearestLift, floor, direction);
+  } else {
+    queueRequest(floor, direction);
   }
 }
 
-function moveLift(liftIndex, floor) {
+function queueRequest(floor, direction) {
+  requestQueue.push({ floor, direction });
+  console.log(`Queued request for floor ${floor}, direction ${direction}`);
+}
+
+function checkQueuedRequests() {
+  if (requestQueue.length === 0) return;
+
+  requestQueue = requestQueue.filter((request) => {
+    const { floor, direction } = request;
+    let nearestLift = -1;
+    let minDistance = Infinity;
+
+    liftState.forEach((lift, index) => {
+      if (
+        !lift.busy &&
+        (lift.direction === null || lift.direction === direction)
+      ) {
+        const distance = Math.abs(lift.currentFloor - floor);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestLift = index;
+        }
+      }
+    });
+
+    if (nearestLift !== -1) {
+      assignLift(nearestLift, floor, direction);
+      return false; // Remove the request from the queue
+    }
+
+    return true; // Keep it in the queue if no lift was available
+  });
+}
+
+function assignLift(liftIndex, floor, direction) {
   const lift = liftState[liftIndex];
   lift.busy = true;
+  lift.direction = direction;
+
   const liftDiv = document.getElementById(`lift-${liftIndex}`);
   const distance = Math.abs(lift.currentFloor - floor);
   const travelTime = distance * 2; // 2 seconds per floor
@@ -141,20 +180,28 @@ function moveLift(liftIndex, floor) {
   liftDiv.style.transition = `transform ${travelTime}s ease-in-out`;
   liftDiv.style.transform = `translateY(${floor * -100}px)`;
 
-  floorLiftCount[floor]++;
+  setTimeout(() => {
+    openCloseDoors(liftDiv, liftIndex, () => {
+      lift.busy = false;
+      lift.direction = null; // Lift is idle
+      checkQueuedRequests(); // After completing the task, check if any requests are pending
+    });
+  }, travelTime * 1000);
+}
+
+function openCloseDoors(liftDiv, liftIndex, callback) {
+  const leftDoor = liftDiv.querySelector(".left-door");
+  const rightDoor = liftDiv.querySelector(".right-door");
+
+  leftDoor.style.width = "0"; // Open doors
+  rightDoor.style.width = "0";
 
   setTimeout(() => {
-    const leftDoor = liftDiv.querySelector(".left-door");
-    const rightDoor = liftDiv.querySelector(".right-door");
-    leftDoor.style.width = "0"; // Open doors
-    rightDoor.style.width = "0";
+    leftDoor.style.width = "50%"; // Close doors
+    rightDoor.style.width = "50%";
 
     setTimeout(() => {
-      leftDoor.style.width = "50%"; // Close doors
-      rightDoor.style.width = "50%";
-
-      lift.busy = false;
-      floorLiftCount[floor]--;
+      callback();
     }, 2500);
-  }, travelTime * 1000);
+  }, 2500);
 }
