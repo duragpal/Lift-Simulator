@@ -11,18 +11,18 @@ submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
   const lifts = parseInt(document.getElementById("lifts").value);
 
-  if (isNaN(floors) || isNaN(lifts) || floors <= 0 || lifts < 0) {
+  if (isNaN(floors) || isNaN(lifts) || floors < 0 || lifts < 0) {
     alert("Please enter positive numbers for floors and lifts.");
     return;
   }
-  if (floors === 1) {
-    alert("No need for lift on a single ground floor.");
+  if (floors === 0) {
+    alert("Add atleast 1 floor.");
     return;
   }
-  if (lifts === 0) {
-    alert(`At least 1 lift is required to go to ${floors} floors.`);
-    return;
-  }
+  // if (lifts === 0) {
+  //   alert(`At least 1 lift is required to go to ${floors} floors.`);
+  //   return;
+  // }
 
   inputDiv.style.display = "none";
   simulation.innerHTML = "";
