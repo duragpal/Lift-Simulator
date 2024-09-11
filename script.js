@@ -5,7 +5,7 @@ const inputDiv = document.querySelector(".inputDiv");
 let liftState = [];
 let floorLiftCount = {};
 let requestQueue = [];
-let activeRequests = new Set(); // Track floors with active requests
+let activeRequests = new Set(); // Track floors with active requests by direction
 
 submit.addEventListener("click", () => {
   const floors = parseInt(document.getElementById("floors").value);
@@ -16,13 +16,9 @@ submit.addEventListener("click", () => {
     return;
   }
   if (floors === 0) {
-    alert("Add atleast 1 floor.");
+    alert("Add at least 1 floor.");
     return;
   }
-  // if (lifts === 0) {
-  //   alert(`At least 1 lift is required to go to ${floors} floors.`);
-  //   return;
-  // }
 
   inputDiv.style.display = "none";
   simulation.innerHTML = "";
@@ -104,9 +100,14 @@ function createFloor(floor, lifts) {
 }
 
 function handleButtonClick(floor, direction) {
-  // Check if the floor is already being served
-  if (activeRequests.has(floor)) {
-    console.log(`Floor ${floor} is already being served. Ignoring request.`);
+  // Create a unique key for the request (floor + direction)
+  const requestKey = `${floor}-${direction}`;
+
+  // Check if the floor and direction is already being served
+  if (activeRequests.has(requestKey)) {
+    console.log(
+      `Request for floor ${floor}, direction ${direction} is already being served.`
+    );
     return;
   }
 
@@ -180,8 +181,11 @@ function assignLift(liftIndex, floor, direction) {
   lift.busy = true;
   lift.direction = direction;
 
-  // Mark the floor as being served
-  activeRequests.add(floor);
+  // Create a unique key for the request (floor + direction)
+  const requestKey = `${floor}-${direction}`;
+
+  // Mark the floor and direction as being served
+  activeRequests.add(requestKey);
 
   const liftDiv = document.getElementById(`lift-${liftIndex}`);
   const distance = Math.abs(lift.currentFloor - floor);
@@ -196,8 +200,8 @@ function assignLift(liftIndex, floor, direction) {
       lift.busy = false;
       lift.direction = null; // Lift is idle
 
-      // After serving, remove the floor from active requests
-      activeRequests.delete(floor);
+      // After serving, remove the floor and direction from active requests
+      activeRequests.delete(requestKey);
 
       checkQueuedRequests(); // After completing the task, check if any requests are pending
     });
